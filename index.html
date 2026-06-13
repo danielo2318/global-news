@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Global News - Explore World News Visually</title>
+
+    <!-- Google Fonts: Montserrat (headings) and Roboto (body text) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@300;400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Bootstrap Icons CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.css" rel="stylesheet" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body class="light-theme">
+
+    <div class="app-container">
+
+        <!-- SIDEBAR / LEFT PANEL -->
+        <aside class="sidebar" id="app-sidebar">
+            <!-- Mobile Grab Handle -->
+            <div class="drag-handle" id="sidebar-drag-handle"></div>
+
+            <!-- Application Header -->
+            <header class="sidebar-header">
+                <div class="logo-container">
+                    <div class="logo-box">
+                        <i class="bi bi-newspaper"></i>
+                    </div>
+                    <h1>Global News</h1>
+                </div>
+                <!-- Theme Toggle Button -->
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">
+                    <i class="bi bi-moon-fill theme-icon-dark"></i>
+                    <i class="bi bi-sun-fill theme-icon-light"></i>
+                </button>
+            </header>
+
+            <!-- Classic Search -->
+            <div class="search-section">
+                <div class="search-container">
+                    <i class="bi bi-search search-icon"></i>
+                    <input type="text" id="search-input" placeholder="Search news or country...">
+                    <button class="search-clear-btn" id="search-clear" style="display: none;">
+                        <i class="bi bi-x-circle-fill"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Topic Filters (Categories) -->
+            <div class="categories-section">
+                <span class="section-subtitle">Categories</span>
+                <div class="categories-grid">
+                    <button class="category-pill active" data-category="all">All</button>
+                    <button class="category-pill" data-category="world">World</button>
+                    <button class="category-pill" data-category="technology">Technology</button>
+                    <button class="category-pill" data-category="sports">Sports</button>
+                    <button class="category-pill" data-category="health">Health</button>
+                    <button class="category-pill" data-category="business">Business</button>
+                    <button class="category-pill" data-category="science">Science</button>
+                    <button class="category-pill" data-category="entertainment">Culture</button>
+                </div>
+            </div>
+
+            <!-- Dynamic Content Panel (News / History / Favorites) -->
+            <main class="content-panel">
+
+                <!-- VIEW 1: NEWS FEED -->
+                <section class="content-tab-view active" id="view-news">
+                    <div class="view-header">
+                        <h2 class="view-title">Latest News <span class="country-badge"
+                                id="selected-country-badge">Global</span></h2>
+                    </div>
+
+                    <div class="news-list" id="news-feed-container">
+                        <!-- News Card 1 -->
+                        <article class="news-card" data-news-id="1">
+                            <div class="news-card-img"
+                                style="background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&auto=format&fit=crop&q=60');">
+                                <span class="news-card-tag tag-tech">Technology</span>
+                            </div>
+                            <div class="news-card-body">
+                                <span class="news-card-meta">TechDaily • 2 hours ago</span>
+                                <h3 class="news-card-title">Global Tech Summit 2026: The Future of Artificial
+                                    Intelligence</h3>
+                                <p class="news-card-excerpt">Industry leaders gather to discuss new ethical frameworks,
+                                    quantum computing advancements, and neural network developments...</p>
+                                <div class="news-card-footer">
+                                    <button class="card-btn-read">Read Summary</button>
+                                    <button class="card-btn-fav" aria-label="Save to favorites">
+                                        <i class="bi bi-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- News Card 2 -->
+                        <article class="news-card" data-news-id="2">
+                            <div class="news-card-img"
+                                style="background-image: url('https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=500&auto=format&fit=crop&q=60');">
+                                <span class="news-card-tag tag-science">Science</span>
+                            </div>
+                            <div class="news-card-body">
+                                <span class="news-card-meta">EcoGreen • 5 hours ago</span>
+                                <h3 class="news-card-title">New Solar Grid Launched to Power Millions of Homes</h3>
+                                <p class="news-card-excerpt">The largest renewable energy project of the decade has gone
+                                    live today, reducing local emissions by 15%...</p>
+                                <div class="news-card-footer">
+                                    <button class="card-btn-read">Read Summary</button>
+                                    <button class="card-btn-fav" aria-label="Save to favorites">
+                                        <i class="bi bi-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- News Card 3 -->
+                        <article class="news-card" data-news-id="3">
+                            <div class="news-card-img"
+                                style="background-image: url('https://images.unsplash.com/photo-1461896836934-ffe607ba8211?w=500&auto=format&fit=crop&q=60');">
+                                <span class="news-card-tag tag-sports">Sports</span>
+                            </div>
+                            <div class="news-card-body">
+                                <span class="news-card-meta">WorldSports • Yesterday</span>
+                                <h3 class="news-card-title">Historic Athletics Gold Breaks 12-Year-Old Record</h3>
+                                <p class="news-card-excerpt">An unprecedented feat in the 100-meter sprint crowns the
+                                    new world champion of the athletic season...</p>
+                                <div class="news-card-footer">
+                                    <button class="card-btn-read">Read Summary</button>
+                                    <button class="card-btn-fav" aria-label="Save to favorites">
+                                        <i class="bi bi-heart"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- VIEW 2: SEARCH HISTORY -->
+                <section class="content-tab-view" id="view-history">
+                    <div class="view-header">
+                        <h2 class="view-title">Search History</h2>
+                        <button class="clear-all-btn" id="clear-history-btn">Clear All</button>
+                    </div>
+                    <ul class="history-list" id="history-items-container">
+                        <li class="history-item">
+                            <span class="history-item-text"><i class="bi bi-geo-alt-fill text-orange"></i> Spain</span>
+                            <span class="history-item-meta">10 mins ago</span>
+                            <button class="delete-history-item" aria-label="Delete"><i class="bi bi-x"></i></button>
+                        </li>
+                        <li class="history-item">
+                            <span class="history-item-text"><i class="bi bi-search text-muted"></i> Artificial
+                                Intelligence</span>
+                            <span class="history-item-meta">30 mins ago</span>
+                            <button class="delete-history-item" aria-label="Delete"><i class="bi bi-x"></i></button>
+                        </li>
+                        <li class="history-item">
+                            <span class="history-item-text"><i class="bi bi-geo-alt-fill text-orange"></i> Japan</span>
+                            <span class="history-item-meta">Yesterday</span>
+                            <button class="delete-history-item" aria-label="Delete"><i class="bi bi-x"></i></button>
+                        </li>
+                        <li class="history-item">
+                            <span class="history-item-text"><i class="bi bi-geo-alt-fill text-orange"></i> Brazil</span>
+                            <span class="history-item-meta">2 days ago</span>
+                            <button class="delete-history-item" aria-label="Delete"><i class="bi bi-x"></i></button>
+                        </li>
+                        <li class="history-item">
+                            <span class="history-item-text"><i class="bi bi-search text-muted"></i> Climate
+                                Change</span>
+                            <span class="history-item-meta">3 days ago</span>
+                            <button class="delete-history-item" aria-label="Delete"><i class="bi bi-x"></i></button>
+                        </li>
+                    </ul>
+                </section>
+
+                <!-- VIEW 3: FAVORITES -->
+                <section class="content-tab-view" id="view-favorites">
+                    <div class="view-header">
+                        <h2 class="view-title">My Favorites</h2>
+                    </div>
+                    <div class="news-list" id="favorites-feed-container">
+                        <!-- Favorite News Card -->
+                        <article class="news-card fav-news-card" data-news-id="1">
+                            <div class="news-card-img"
+                                style="background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=500&auto=format&fit=crop&q=60');">
+                                <span class="news-card-tag tag-tech">Technology</span>
+                            </div>
+                            <div class="news-card-body">
+                                <span class="news-card-meta">TechDaily • 2 hours ago</span>
+                                <h3 class="news-card-title">Global Tech Summit 2026: The Future of AI</h3>
+                                <div class="news-card-footer">
+                                    <button class="card-btn-read">Read Summary</button>
+                                    <button class="card-btn-fav active" aria-label="Remove from favorites">
+                                        <i class="bi bi-heart-fill text-orange"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+            </main>
+
+            <!-- Bottom Navigation Bar (Tabs) -->
+            <nav class="bottom-nav">
+                <button class="nav-tab-btn active" id="tab-news" data-target="view-news">
+                    <i class="bi bi-newspaper"></i>
+                    <span>News</span>
+                </button>
+                <button class="nav-tab-btn" id="tab-history" data-target="view-history">
+                    <i class="bi bi-clock-history"></i>
+                    <span>History</span>
+                </button>
+                <button class="nav-tab-btn" id="tab-favorites" data-target="view-favorites">
+                    <i class="bi bi-heart-fill"></i>
+                    <span>Favorites</span>
+                </button>
+            </nav>
+        </aside>
+
+        <!-- MAP / RIGHT PANEL -->
+        <section class="map-section">
+            <div id="map">
+                <!-- Background image simulating a high-quality minimalist map -->
+                <div class="map-placeholder-bg" style="background-image: url('assets/map_placeholder.png');"></div>
+
+                <!-- Grid Overlay to give a technological style -->
+                <div class="map-grid-layer"></div>
+
+                <!-- Floating Zoom Controls (Top-Left) -->
+                <div class="map-zoom-controls">
+                    <button id="zoom-in" class="zoom-btn" aria-label="Zoom In"><i class="bi bi-plus-lg"></i></button>
+                    <hr class="zoom-divider">
+                    <button id="zoom-out" class="zoom-btn" aria-label="Zoom Out"><i class="bi bi-dash-lg"></i></button>
+                </div>
+
+                <!-- Map Legend -->
+                <div class="map-legend">
+                    <i class="bi bi-info-circle-fill"></i>
+                    <span>Click on a marker or country to load local news</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- READING PANEL (Sliding side drawer) -->
+        <article class="reading-panel" id="reading-panel">
+            <button class="reading-panel-close" id="close-reading-panel" aria-label="Close panel">
+                <i class="bi bi-x-lg"></i>
+            </button>
+            <div class="reading-panel-scroll">
+                <div class="reading-panel-hero" id="reading-hero"
+                    style="background-image: url('https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=1000&auto=format&fit=crop&q=80');">
+                    <span class="reading-panel-tag tag-tech" id="reading-tag">Technology</span>
+                </div>
+                <div class="reading-panel-content">
+                    <div class="reading-panel-meta">
+                        <span id="reading-source"><i class="bi bi-journal-bookmark-fill"></i> TechDaily</span>
+                        <span id="reading-date"><i class="bi bi-calendar3"></i> June 09, 2026</span>
+                    </div>
+                    <h2 class="reading-panel-title" id="reading-title">Global Tech Summit 2026: The Future of Artificial
+                        Intelligence</h2>
+
+                    <div class="reading-panel-body" id="reading-body">
+                        <p>The Global Tech Summit held this year gathered the most prominent figures in science and
+                            technology to debate the future of Artificial Intelligence. The discussions focused on
+                            global ethical regulations, the emergence of advanced reasoning models, and the integration
+                            of AI into physical infrastructure and public health sectors.</p>
+                        <p>Consortium engineers showcased live demonstrations of collaborative autonomous agents capable
+                            of resolving complex logical problems in real-time without needing a constant internet
+                            connection, utilizing highly efficient microarchitectures.</p>
+                        <p>New multilateral frameworks are expected by the end of the year to ensure the transparent use
+                            of training data and security against emerging digital risks.</p>
+                    </div>
+
+                    <div class="reading-panel-footer">
+                        <a href="https://example.com/news/tech-summit" target="_blank" rel="noopener noreferrer"
+                            class="reading-panel-link-btn" id="reading-link">
+                            Visit Original Article <i class="bi bi-box-arrow-up-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+    </div>
+
+
+    <!-- Application Module Placeholder Scripts -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.4.0/mapbox-gl.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/news.js"></script>
+    <script src="js/map.js"></script>
+    <script src="js/ui.js"></script>
+
+    <!-- Inline Helper Script for Static Page Interactions -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('Static interactions loaded successfully.');
+
+            // 1. Dark / Light Theme Switching
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            themeToggleBtn.addEventListener('click', () => {
+                const isLight = document.body.classList.contains('light-theme');
+                if (isLight) {
+                    document.body.classList.replace('light-theme', 'dark-theme');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    document.body.classList.replace('dark-theme', 'light-theme');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+
+            // Recover user theme preference
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.replace('light-theme', 'dark-theme');
+            }
+
+            // 2. Sidebar Tab Navigation (News, History, Favorites)
+            const tabs = document.querySelectorAll('.nav-tab-btn');
+            const views = document.querySelectorAll('.content-tab-view');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active states from all tabs and views
+                    tabs.forEach(t => t.classList.remove('active'));
+                    views.forEach(v => v.classList.remove('active'));
+
+                    // Activate selected tab and matching view
+                    tab.classList.add('active');
+                    const targetId = tab.getAttribute('data-target');
+                    document.getElementById(targetId).classList.add('active');
+                });
+            });
+
+           /*  // 3. Category Pill Selection
+            const categoryPills = document.querySelectorAll('.category-pill');
+            categoryPills.forEach(pill => {
+                pill.addEventListener('click', () => {
+                    categoryPills.forEach(p => p.classList.remove('active'));
+                    pill.classList.add('active');
+                });
+            });
+
+            // 4. Open and Close Reading Drawer Panel
+            const readingPanel = document.getElementById('reading-panel');
+            const closeReadingBtn = document.getElementById('close-reading-panel');
+
+            const bindReadButtons = () => {
+                const readButtons = document.querySelectorAll('.card-btn-read');
+                readButtons.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        // Retrieve data elements from the selected card
+                        const card = btn.closest('.news-card');
+                        const title = card.querySelector('.news-card-title').innerText;
+                        const excerpt = card.querySelector('.news-card-excerpt') ? card.querySelector('.news-card-excerpt').innerText : '';
+                        const meta = card.querySelector('.news-card-meta').innerText;
+                        const tagEl = card.querySelector('.news-card-tag');
+                        const tagText = tagEl ? tagEl.innerText : 'World';
+                        const tagClass = tagEl ? tagEl.className : 'news-card-tag';
+                        const bgImage = card.querySelector('.news-card-img').style.backgroundImage;
+
+                        // Populate reading drawer panel
+                        document.getElementById('reading-title').innerText = title;
+                        document.getElementById('reading-tag').innerText = tagText;
+                        document.getElementById('reading-tag').className = 'reading-panel-tag ' + tagClass.replace('news-card-tag', '');
+                        document.getElementById('reading-hero').style.backgroundImage = bgImage;
+                        document.getElementById('reading-source').innerHTML = `<i class="bi bi-journal-bookmark-fill"></i> ` + meta.split(' • ')[0];
+                        document.getElementById('reading-date').innerHTML = `<i class="bi bi-calendar3"></i> ` + meta.split(' • ')[1];
+
+                        // Set mockup detailed description body
+                        document.getElementById('reading-body').innerHTML = `
+                            <p>${excerpt}</p>
+                            <p>This is a static simulation of the full article content. In the final interactive version of the Global News project, when selecting an article loaded from the Currents API, this section will present detailed, up-to-the-minute coverage regarding the chosen country or category on the map.</p>
+                            <p>The Mapbox interactive visualizer and dynamic queries to the Currents API will allow you to stay informed of political, athletic, scientific, and cultural events across the globe in real time.</p>
+                        `;
+
+                        // Display panel
+                        readingPanel.classList.add('open');
+                    });
+                });
+            };
+
+            bindReadButtons();
+
+            closeReadingBtn.addEventListener('click', () => {
+                readingPanel.classList.remove('open');
+            });
+
+            // Close reading panel when clicking outer elements
+            document.addEventListener('click', (e) => {
+                if (readingPanel.classList.contains('open') &&
+                    !readingPanel.contains(e.target) &&
+                    !e.target.closest('.card-btn-read') &&
+                    !e.target.closest('.map-marker')) {
+                    readingPanel.classList.remove('open');
+                }
+            }); */
+
+            // 5. Map Pin Click Interactivity
+            const mapMarkers = document.querySelectorAll('.map-marker');
+            const searchInput = document.getElementById('search-input');
+            const countryBadge = document.getElementById('selected-country-badge');
+
+            mapMarkers.forEach(marker => {
+                marker.addEventListener('click', () => {
+                    const country = marker.getAttribute('data-country');
+                    searchInput.value = country;
+                    countryBadge.innerText = country;
+
+                    // Switch view to news tab automatically
+                    document.getElementById('tab-news').click();
+
+                    // Display clear button inside search input
+                    document.getElementById('search-clear').style.display = 'block';
+
+                    // Temporary visual feedback animation on pin click
+                    marker.classList.add('clicked');
+                    setTimeout(() => marker.classList.remove('clicked'), 600);
+                });
+            });
+
+            // Clear Search bar button
+            const clearSearchBtn = document.getElementById('search-clear');
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                countryBadge.innerText = 'Global';
+                clearSearchBtn.style.display = 'none';
+            });
+
+            searchInput.addEventListener('input', () => {
+                if (searchInput.value.trim().length > 0) {
+                    clearSearchBtn.style.display = 'block';
+                } else {
+                    clearSearchBtn.style.display = 'none';
+                    countryBadge.innerText = 'Global';
+                }
+            });
+
+            // 6. Mobile Bottom Sheet Toggle via Drag Handle
+            const dragHandle = document.getElementById('sidebar-drag-handle');
+            const sidebar = document.getElementById('app-sidebar');
+
+            dragHandle.addEventListener('click', () => {
+                sidebar.classList.toggle('expanded');
+            });
+        });
+    </script>
+</body>
+
+</html>
