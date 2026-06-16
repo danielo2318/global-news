@@ -6,7 +6,7 @@ mapboxgl.accessToken = config.mapbox_token;
 // inicializar el mapa global
 const map = new mapboxgl.Map({
     container: 'map', 
-    style: 'mapbox://styles/mapbox/dark-v11', 
+    style: 'mapbox://styles/mapbox/satellite-streets-v12', 
     center: [-40, 35], 
     zoom: 2, 
     projection: 'globe' 
@@ -15,6 +15,12 @@ const map = new mapboxgl.Map({
 // configuración cuando el mapa termine de cargar
 map.on('load', () => {
     console.log("Mapbox cargado y renderizado con éxito.");
+    
+    // Ocultar el placeholder para que se vea el globo interactivo real
+    const placeholder = document.querySelector('.map-placeholder-bg');
+    if (placeholder) {
+        placeholder.style.display = 'none';
+    }
     
     map.setFog({
         color: 'rgb(186, 210, 247)', 
@@ -34,11 +40,21 @@ map.on('load', () => {
     ];
 
     countries.forEach(country => {
+        // Crear un popup con el nombre del país
+        const popup = new mapboxgl.Popup({ offset: 25, closeButton: false })
+            .setText(country.name);
+
         const marker = new mapboxgl.Marker({ color: '#ff6600' })
             .setLngLat(country.coords)
+            .setPopup(popup) // Añadimos el popup al marcador
             .addTo(map);
 
-        marker.getElement().addEventListener('click', () => {
+        // Mostrar el popup al pasar el ratón
+        const markerEl = marker.getElement();
+        markerEl.addEventListener('mouseenter', () => marker.togglePopup());
+        markerEl.addEventListener('mouseleave', () => marker.togglePopup());
+
+        markerEl.addEventListener('click', () => {
             console.log(`🌍 Conectando... Buscando noticias para: ${country.name} (${country.code})`);
             
             //guardamos el país globalmente para futuros filtros de categoría
@@ -47,5 +63,13 @@ map.on('load', () => {
             // llamada directa: news.js hará todo el trabajo de recibir y renderizar
             fetchNewsByCountry(country.code, 'general');
         });
+    });
+
+    // Configurar controles de zoom
+    document.getElementById('zoom-in')?.addEventListener('click', () => {
+        map.zoomIn();
+    });
+    document.getElementById('zoom-out')?.addEventListener('click', () => {
+        map.zoomOut();
     });
 });

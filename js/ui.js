@@ -115,4 +115,91 @@ function conectarBotonesCategorias() {
     });
 }
 
-window.addEventListener('load', conectarBotonesCategorias);
+window.addEventListener('load', () => {
+    conectarBotonesCategorias();
+    
+    // Fetch initial news for default country (e.g., Global/US) if nothing is loaded
+    if (typeof fetchNewsByCountry === 'function') {
+        fetchNewsByCountry('us', 'general');
+    }
+});
+
+function renderFavorites() {
+    const container = document.getElementById('favorites-feed-container');
+    if (!container) return;
+    
+    container.innerHTML = '';
+    const favorites = typeof getFavorites === 'function' ? getFavorites() : [];
+    
+    if (favorites.length === 0) {
+        container.innerHTML = `<p style="padding: 2rem; text-align: center; color: var(--text-muted);">No tienes noticias favoritas aún.</p>`;
+        return;
+    }
+
+    favorites.forEach((article, index) => {
+        const card = document.createElement('article');
+        card.classList.add('news-card');
+        
+        const imageUrl = (article.image && article.image !== 'None') ? article.image : 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=500';
+
+        card.innerHTML = `
+            <div class="news-card-img" style="background-image: url('${imageUrl}');">
+            </div>
+            <div class="news-card-body">
+                <span class="news-card-meta">${article.author || 'Global News'} • ${article.published ? article.published.substring(0,10) : 'Recent'}</span>
+                <h3 class="news-card-title">${article.title}</h3>
+                <div class="news-card-footer">
+                    <button class="card-btn-read" data-id="${article.id}">Read Summary</button>
+                    <button class="card-btn-fav active" data-id="${article.id}">
+                        <i class="bi bi-heart-fill text-orange"></i>
+                    </button>
+                </div>
+            </div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+const tabFavorites = document.getElementById('tab-favorites');
+if (tabFavorites) {
+    tabFavorites.addEventListener('click', renderFavorites);
+}
+
+const favoritesFeedContainer = document.getElementById('favorites-feed-container');
+if (favoritesFeedContainer) {
+    favoritesFeedContainer.addEventListener('click', (e) => {
+        const favButton = e.target.closest('.card-btn-fav');
+        if (favButton) {
+            const articleId = favButton.dataset.id;
+            if (typeof removeFavorite === 'function') {
+                removeFavorite(articleId);
+                renderFavorites(); 
+            }
+            return;
+        }
+
+        const readButton = e.target.closest('.card-btn-read');
+        if (readButton) {
+            const articleId = readButton.dataset.id;
+            const favorites = typeof getFavorites === 'function' ? getFavorites() : [];
+            const article = favorites.find(f => f.id === articleId);
+            if (article) {
+                const readingPanel = document.getElementById('reading-panel');
+                document.getElementById('reading-title').innerText = article.title;
+                document.getElementById('reading-source').innerHTML = `<i class="bi bi-journal-bookmark-fill"></i> ${article.author || 'Global News'}`;
+                
+                const imageUrl = (article.image && article.image !== 'None') ? article.image : 'https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=500';
+                document.getElementById('reading-hero').style.backgroundImage = `url('${imageUrl}')`;
+                
+                document.getElementById('reading-body').innerHTML = `
+                    <p>${article.description || 'Sin descripción detallada disponible para esta noticia.'}</p>
+                `;
+                
+                const linkBtn = document.getElementById('reading-link');
+                if(linkBtn) linkBtn.href = article.url;
+                
+                readingPanel.classList.add('open');
+            }
+        }
+    });
+}

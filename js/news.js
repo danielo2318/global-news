@@ -3,7 +3,7 @@ window.currentNewsList = [];
 async function fetchNewsByCountry(countryCode, category = 'all') {
     const spanishCountries = ['mx', 'es', 'ar', 'co', 'cl', 'pe', 've'];
     const lang = spanishCountries.includes(countryCode.toLowerCase()) ? 'es' : 'en';
-    const apiKey = window.config?.CURRENTS_API_KEY || '4ChVF-1X0wJ7JmHs7wOYwc_G9YF8otsuQYUrSONIZaXbTSLd'; 
+    const apiKey = typeof config !== 'undefined' ? config.currents_key : 'TU_CURRENTS_API_KEY_AQUI'; 
 
     let url = `https://api.currentsapi.services/v1/latest-news?country=${countryCode}&language=${lang}&apiKey=${apiKey}`;
     
