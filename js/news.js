@@ -33,3 +33,27 @@ async function fetchNewsByCountry(countryCode, category = 'all') {
         console.error("Error al obtener noticias:", error);
     }
 }
+
+async function fetchNewsByKeyword(keyword) {
+    const apiKey = typeof config !== 'undefined' ? config.currents_key : 'TU_CURRENTS_API_KEY_AQUI'; 
+    // Use the /search endpoint
+    const url = `https://api.currentsapi.services/v1/search?keywords=${encodeURIComponent(keyword)}&language=en&apiKey=${apiKey}`;
+
+    console.log(`🌍 Conectando a API... Buscando: ${keyword}`);
+
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data && data.status === 'ok') {
+            console.log("✅ Búsqueda recibida:", data.news);
+            window.currentNewsList = data.news;
+            
+            if (typeof renderNewsCards === 'function') {
+                renderNewsCards(window.currentNewsList);
+            }
+        }
+    } catch (error) {
+        console.error("Error al buscar noticias:", error);
+    }
+}

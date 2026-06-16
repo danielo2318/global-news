@@ -62,6 +62,12 @@ map.on('load', () => {
             
             // llamada directa: news.js hará todo el trabajo de recibir y renderizar
             fetchNewsByCountry(country.code, 'general');
+            
+            // Auto expandir en móvil al seleccionar un país
+            const sidebar = document.getElementById('app-sidebar');
+            if (sidebar && window.innerWidth <= 768) {
+                sidebar.classList.add('expanded');
+            }
         });
     });
 

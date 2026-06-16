@@ -111,6 +111,12 @@ function conectarBotonesCategorias() {
             button.classList.add('active');
             
             fetchNewsByCountry(window.currentCountry || 'mx', cat);
+            
+            // Auto expandir en móvil
+            const sidebar = document.getElementById('app-sidebar');
+            if (sidebar && window.innerWidth <= 768) {
+                sidebar.classList.add('expanded');
+            }
         });
     });
 }
@@ -121,6 +127,83 @@ window.addEventListener('load', () => {
     // Fetch initial news for default country (e.g., Global/US) if nothing is loaded
     if (typeof fetchNewsByCountry === 'function') {
         fetchNewsByCountry('us', 'general');
+    }
+
+    // Funcionalidad de Búsqueda Tradicional
+    const searchInput = document.getElementById('search-input');
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const query = searchInput.value.trim();
+                if (query.length > 0 && typeof fetchNewsByKeyword === 'function') {
+                    // Quitar categorías activas
+                    document.querySelectorAll('.category-pill').forEach(btn => btn.classList.remove('active'));
+                    
+                    const badge = document.getElementById('selected-country-badge');
+                    if (badge) badge.innerText = `Búsqueda: ${query}`;
+                    
+                    // Cambiar a pestaña News
+                    document.getElementById('tab-news')?.click();
+                    
+                    fetchNewsByKeyword(query);
+                    
+                    // Auto expandir en móvil
+                    const sidebar = document.getElementById('app-sidebar');
+                    if (sidebar && window.innerWidth <= 768) {
+                        sidebar.classList.add('expanded');
+                    }
+                    
+                    // Quitar el teclado en móviles
+                    searchInput.blur();
+                }
+            }
+        });
+    }
+
+    // Agregar gestos táctiles (Swipe) para deslizar el menú en celulares y PC (mouse)
+    const sidebar = document.getElementById('app-sidebar');
+    if (sidebar) {
+        let startY;
+        
+        sidebar.addEventListener('pointerdown', (e) => {
+            // Ignorar el botón del sol/luna
+            if (e.target.closest('.theme-toggle-btn')) {
+                startY = null;
+                return;
+            }
+            
+            // Detectar inicio de arrastre desde la cabecera o la rayita
+            if (e.target.closest('.drag-handle') || e.target.closest('.sidebar-header')) {
+                startY = e.clientY;
+                // Evitar que el texto se sombree de azul al arrastrar con el mouse
+                if (e.pointerType === 'mouse') {
+                    document.body.style.userSelect = 'none';
+                }
+            } else {
+                startY = null;
+            }
+        });
+
+        window.addEventListener('pointerup', (e) => {
+            document.body.style.userSelect = ''; // Restaurar selección
+            
+            if (!startY) return;
+            let endY = e.clientY;
+            let diffY = startY - endY;
+            
+            if (diffY > 20) {
+                // Arrastró hacia arriba (expandir)
+                sidebar.classList.add('expanded');
+            } else if (diffY < -20) {
+                // Arrastró hacia abajo (contraer)
+                sidebar.classList.remove('expanded');
+            } else if (Math.abs(diffY) <= 20) {
+                // Si fue solo un clic normal en la cabecera, alternamos
+                sidebar.classList.toggle('expanded');
+            }
+            
+            startY = null;
+        });
     }
 });
 
